@@ -1,0 +1,24 @@
+[package]
+name = "tokimo-kvdb"
+version = "0.1.0"
+edition = "2021"
+description = "A high-performance embedded key-value database with B-tree index, WAL, and page-based storage"
+license = "MIT"
+repository = "https://github.com/tokimo-lab/kvdb"
+homepage = "https://github.com/tokimo-lab/kvdb"
+keywords = ["database", "embedded", "key-value", "btree", "storage"]
+categories = ["database-implementations"]
+readme = "README.md"
+
+[dependencies]
+crc32fast = "1.4"
+parking_lot = "0.12"
+thiserror = "2"
+
+[dev-dependencies]
+tempfile = "3"
+rand = "0.8"
+
+[[bin]]
+name = "tokimo-kvdb-cli"
+path = "src/cli.rs"
