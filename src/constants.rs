@@ -20,6 +20,12 @@ pub struct MetaData {
     pub wal_offset: u64,
 }
 
+impl Default for MetaData {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MetaData {
     pub fn new() -> Self {
         Self {
@@ -39,7 +45,10 @@ impl MetaData {
 
     pub fn as_bytes(&self) -> &[u8] {
         unsafe {
-            std::slice::from_raw_parts(self as *const Self as *const u8, std::mem::size_of::<Self>())
+            std::slice::from_raw_parts(
+                self as *const Self as *const u8,
+                std::mem::size_of::<Self>(),
+            )
         }
     }
 
@@ -75,7 +84,10 @@ impl NodeHeader {
 
     pub fn as_bytes(&self) -> &[u8] {
         unsafe {
-            std::slice::from_raw_parts(self as *const Self as *const u8, std::mem::size_of::<Self>())
+            std::slice::from_raw_parts(
+                self as *const Self as *const u8,
+                std::mem::size_of::<Self>(),
+            )
         }
     }
 

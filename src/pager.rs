@@ -144,8 +144,7 @@ impl Pager {
             if metadata.freelist_page != INVALID_PAGE_ID {
                 let free_page_id = metadata.freelist_page;
                 let page = self.get_page(free_page_id)?;
-                let next_free =
-                    u64::from_le_bytes(page.data[..8].try_into().unwrap());
+                let next_free = u64::from_le_bytes(page.data[..8].try_into().unwrap());
 
                 let mut new_meta = metadata;
                 new_meta.freelist_page = next_free;
@@ -163,10 +162,7 @@ impl Pager {
         let mut page = Box::new(Page::new(page_id));
         page.clear();
 
-        self.cache.push(CacheEntry {
-            page_id,
-            page,
-        });
+        self.cache.push(CacheEntry { page_id, page });
 
         if !is_bootstrapping {
             let mut metadata = self.read_metadata()?;
@@ -195,14 +191,20 @@ impl Pager {
 
     pub fn get_page(&mut self, page_id: PageId) -> Result<&Page> {
         self.ensure_cached(page_id)?;
-        let entry = self.cache.iter().find(|e| e.page_id == page_id)
+        let entry = self
+            .cache
+            .iter()
+            .find(|e| e.page_id == page_id)
             .ok_or(KvdbError::PageNotFound(page_id))?;
         Ok(&*entry.page)
     }
 
     pub fn get_page_mut(&mut self, page_id: PageId) -> Result<&mut Page> {
         self.ensure_cached(page_id)?;
-        let entry = self.cache.iter_mut().find(|e| e.page_id == page_id)
+        let entry = self
+            .cache
+            .iter_mut()
+            .find(|e| e.page_id == page_id)
             .ok_or(KvdbError::PageNotFound(page_id))?;
         Ok(&mut *entry.page)
     }
@@ -223,10 +225,7 @@ impl Pager {
             page.data[bytes_read..].fill(0);
         }
 
-        self.cache.push(CacheEntry {
-            page_id,
-            page,
-        });
+        self.cache.push(CacheEntry { page_id, page });
         Ok(())
     }
 

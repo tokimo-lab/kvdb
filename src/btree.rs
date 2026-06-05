@@ -36,9 +36,8 @@ fn read_key_info(page: &Page, index: u16) -> KeyInfo {
 
 fn write_key_info(page: &mut Page, index: u16, ki: &KeyInfo) {
     let offset = HEADER_SIZE + index as usize * KEY_INFO_SIZE;
-    let bytes = unsafe {
-        std::slice::from_raw_parts(ki as *const KeyInfo as *const u8, KEY_INFO_SIZE)
-    };
+    let bytes =
+        unsafe { std::slice::from_raw_parts(ki as *const KeyInfo as *const u8, KEY_INFO_SIZE) };
     page.data[offset..offset + KEY_INFO_SIZE].copy_from_slice(bytes);
     page.mark_dirty();
 }
@@ -101,8 +100,7 @@ fn binary_search(page: &Page, num_keys: u16, target: &[u8]) -> SearchResult {
     while low <= high {
         let mid = low + (high - low) / 2;
         let ki = read_key_info(page, mid as u16);
-        let key =
-            &page.data[ki.key_offset as usize..ki.key_offset as usize + ki.key_len as usize];
+        let key = &page.data[ki.key_offset as usize..ki.key_offset as usize + ki.key_len as usize];
         match key.cmp(target) {
             std::cmp::Ordering::Equal => {
                 return SearchResult {
@@ -324,8 +322,7 @@ impl BTree {
 
                 // Write the median key
                 let offset = DATA_START_OFFSET;
-                new_root.data[offset..offset + median_key.len()]
-                    .copy_from_slice(&median_key);
+                new_root.data[offset..offset + median_key.len()].copy_from_slice(&median_key);
 
                 let ki = KeyInfo {
                     key_offset: offset as u16,
@@ -621,12 +618,7 @@ impl BTree {
         self.delete_from_node(pager, self.root_page_id, key)
     }
 
-    fn delete_from_node(
-        &mut self,
-        pager: &mut Pager,
-        page_id: PageId,
-        key: &[u8],
-    ) -> Result<()> {
+    fn delete_from_node(&mut self, pager: &mut Pager, page_id: PageId, key: &[u8]) -> Result<()> {
         let page = pager.get_page(page_id)?;
         let header = read_header(page);
 
@@ -746,10 +738,7 @@ impl BTree {
     }
 
     /// Count the tree height, node counts, etc.
-    pub fn inspect(
-        &self,
-        pager: &mut Pager,
-    ) -> Result<(u32, u64, u64, u64, u64)> {
+    pub fn inspect(&self, pager: &mut Pager) -> Result<(u32, u64, u64, u64, u64)> {
         let mut height = 0u32;
         let mut node_count = 0u64;
         let mut leaf_count = 0u64;
@@ -822,7 +811,14 @@ impl BTree {
     pub fn verify(&self, pager: &mut Pager) -> Result<(u64, u64)> {
         let mut pages_checked = 0u64;
         let mut entries_checked = 0u64;
-        self.verify_node(pager, self.root_page_id, None, None, &mut pages_checked, &mut entries_checked)?;
+        self.verify_node(
+            pager,
+            self.root_page_id,
+            None,
+            None,
+            &mut pages_checked,
+            &mut entries_checked,
+        )?;
         Ok((pages_checked, entries_checked))
     }
 
@@ -875,8 +871,16 @@ impl BTree {
                 keys.push(get_key_from_page(page, i));
             }
             for i in 0..child_ids.len() {
-                let lb = if i == 0 { lower_bound.map(|b| b.to_vec()) } else { Some(keys[i - 1].clone()) };
-                let ub = if i == keys.len() { upper_bound.map(|b| b.to_vec()) } else { Some(keys[i].clone()) };
+                let lb = if i == 0 {
+                    lower_bound.map(|b| b.to_vec())
+                } else {
+                    Some(keys[i - 1].clone())
+                };
+                let ub = if i == keys.len() {
+                    upper_bound.map(|b| b.to_vec())
+                } else {
+                    Some(keys[i].clone())
+                };
                 bounds.push((lb, ub));
             }
             for (i, cid) in child_ids.iter().enumerate() {
@@ -943,7 +947,9 @@ mod tests {
         for i in 0..100u32 {
             let key = format!("key_{:04}", i);
             let val = format!("val_{:04}", i);
-            btree.insert(&mut pager, key.as_bytes(), val.as_bytes()).unwrap();
+            btree
+                .insert(&mut pager, key.as_bytes(), val.as_bytes())
+                .unwrap();
         }
 
         // All entries should be findable
@@ -991,7 +997,9 @@ mod tests {
         for i in 0..200u32 {
             let key = format!("k{:05}", i);
             let val = format!("v{:05}", i);
-            btree.insert(&mut pager, key.as_bytes(), val.as_bytes()).unwrap();
+            btree
+                .insert(&mut pager, key.as_bytes(), val.as_bytes())
+                .unwrap();
         }
 
         for i in 0..200u32 {
@@ -1043,14 +1051,8 @@ mod tests {
 
         btree.delete(&mut pager, b"b").unwrap();
         assert_eq!(btree.search(&mut pager, b"b").unwrap(), None);
-        assert_eq!(
-            btree.search(&mut pager, b"a").unwrap(),
-            Some(b"1".to_vec())
-        );
-        assert_eq!(
-            btree.search(&mut pager, b"c").unwrap(),
-            Some(b"3".to_vec())
-        );
+        assert_eq!(btree.search(&mut pager, b"a").unwrap(), Some(b"1".to_vec()));
+        assert_eq!(btree.search(&mut pager, b"c").unwrap(), Some(b"3".to_vec()));
 
         std::fs::remove_file(&path).ok();
     }
@@ -1062,7 +1064,9 @@ mod tests {
         for i in 0..50u32 {
             let key = format!("key_{:04}", i);
             let val = format!("val_{:04}", i);
-            btree.insert(&mut pager, key.as_bytes(), val.as_bytes()).unwrap();
+            btree
+                .insert(&mut pager, key.as_bytes(), val.as_bytes())
+                .unwrap();
         }
 
         let (pages, entries) = btree.verify(&mut pager).unwrap();
@@ -1079,11 +1083,12 @@ mod tests {
         for i in 0..100u32 {
             let key = format!("key_{:04}", i);
             let val = format!("val_{:04}", i);
-            btree.insert(&mut pager, key.as_bytes(), val.as_bytes()).unwrap();
+            btree
+                .insert(&mut pager, key.as_bytes(), val.as_bytes())
+                .unwrap();
         }
 
-        let (height, nodes, leaves, internals, entries) =
-            btree.inspect(&mut pager).unwrap();
+        let (height, nodes, leaves, internals, entries) = btree.inspect(&mut pager).unwrap();
         assert!(height >= 2);
         assert_eq!(entries, 100);
         assert!(leaves > 0);

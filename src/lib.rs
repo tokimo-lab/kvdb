@@ -1,10 +1,10 @@
+pub mod btree;
 pub mod constants;
+pub mod database;
 pub mod error;
 pub mod pager;
-pub mod btree;
 pub mod wal;
-pub mod database;
 
 pub use constants::*;
+pub use database::{Database, InspectStats, Options, Stats, VerifyStats};
 pub use error::*;
-pub use database::{Database, Options, Stats, InspectStats, VerifyStats};

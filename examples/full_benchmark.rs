@@ -50,7 +50,11 @@ fn bench_seq_insert(root: &str) -> BenchResult {
     insert_range(&mut db, 0, OP_COUNT);
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "sequential-insert", ops: OP_COUNT, elapsed_ns: e }
+    BenchResult {
+        name: "sequential-insert",
+        ops: OP_COUNT,
+        elapsed_ns: e,
+    }
 }
 
 fn bench_rnd_insert(root: &str) -> BenchResult {
@@ -66,7 +70,11 @@ fn bench_rnd_insert(root: &str) -> BenchResult {
     }
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "random-insert", ops: OP_COUNT, elapsed_ns: e }
+    BenchResult {
+        name: "random-insert",
+        ops: OP_COUNT,
+        elapsed_ns: e,
+    }
 }
 
 fn bench_lookup(root: &str) -> BenchResult {
@@ -81,7 +89,11 @@ fn bench_lookup(root: &str) -> BenchResult {
     }
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "point-lookup", ops: OP_COUNT, elapsed_ns: e }
+    BenchResult {
+        name: "point-lookup",
+        ops: OP_COUNT,
+        elapsed_ns: e,
+    }
 }
 
 fn bench_scan(root: &str) -> BenchResult {
@@ -94,7 +106,11 @@ fn bench_scan(root: &str) -> BenchResult {
     }
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "scan", ops: KEY_SPACE * SCAN_REPS, elapsed_ns: e }
+    BenchResult {
+        name: "scan",
+        ops: KEY_SPACE * SCAN_REPS,
+        elapsed_ns: e,
+    }
 }
 
 fn bench_update(root: &str) -> BenchResult {
@@ -106,7 +122,11 @@ fn bench_update(root: &str) -> BenchResult {
     }
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "update", ops: OP_COUNT, elapsed_ns: e }
+    BenchResult {
+        name: "update",
+        ops: OP_COUNT,
+        elapsed_ns: e,
+    }
 }
 
 fn bench_delete(root: &str) -> BenchResult {
@@ -119,7 +139,11 @@ fn bench_delete(root: &str) -> BenchResult {
     }
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "delete", ops: del, elapsed_ns: e }
+    BenchResult {
+        name: "delete",
+        ops: del,
+        elapsed_ns: e,
+    }
 }
 
 fn bench_compact(root: &str) -> BenchResult {
@@ -135,7 +159,11 @@ fn bench_compact(root: &str) -> BenchResult {
     db.compact().unwrap();
     let e = t.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { name: "compact", ops: 1, elapsed_ns: e }
+    BenchResult {
+        name: "compact",
+        ops: 1,
+        elapsed_ns: e,
+    }
 }
 
 // ── Concurrency benchmarks ──────────────────────────────────────────
@@ -319,10 +347,15 @@ fn main() {
     std::fs::create_dir_all(root).ok();
 
     println!("tokimo-kvdb full benchmark suite");
-    println!("  ops={} key_space={} scan_reps={} seed=0x{:X}\n",
-             OP_COUNT, KEY_SPACE, SCAN_REPS, SEED);
+    println!(
+        "  ops={} key_space={} scan_reps={} seed=0x{:X}\n",
+        OP_COUNT, KEY_SPACE, SCAN_REPS, SEED
+    );
 
-    println!("{:<24} {:>10} {:>12} {:>14}", "workload", "ops", "elapsed ms", "ops/sec");
+    println!(
+        "{:<24} {:>10} {:>12} {:>14}",
+        "workload", "ops", "elapsed ms", "ops/sec"
+    );
     println!("{}", "-".repeat(64));
 
     let results = vec![
@@ -338,7 +371,10 @@ fn main() {
         print_row(r);
     }
 
-    println!("\n{:<24} {:>10} {:>12} {:>14}", "concurrency", "ops", "elapsed ms", "ops/sec");
+    println!(
+        "\n{:<24} {:>10} {:>12} {:>14}",
+        "concurrency", "ops", "elapsed ms", "ops/sec"
+    );
     println!("{}", "-".repeat(64));
 
     let conc = vec![

@@ -80,7 +80,8 @@ impl Wal {
                 stack_buf[header_size + key.len()..total].copy_from_slice(v);
             }
             // pwrite — no seek needed
-            self.file.write_at(&stack_buf[..total], self.current_offset)?;
+            self.file
+                .write_at(&stack_buf[..total], self.current_offset)?;
         } else {
             let mut buf = Vec::with_capacity(total);
             buf.extend_from_slice(header.as_bytes());
@@ -241,10 +242,7 @@ mod tests {
 
         // Corrupt the checksum
         {
-            let mut file = OpenOptions::new()
-                .write(true)
-                .open(&wal_file)
-                .unwrap();
+            let mut file = OpenOptions::new().write(true).open(&wal_file).unwrap();
             file.seek(SeekFrom::Start(0)).unwrap();
             file.write_all(&[0xFF, 0xFF, 0xFF, 0xFF]).unwrap();
         }
@@ -273,10 +271,7 @@ mod tests {
 
         // Truncate the file
         {
-            let file = OpenOptions::new()
-                .write(true)
-                .open(&wal_file)
-                .unwrap();
+            let file = OpenOptions::new().write(true).open(&wal_file).unwrap();
             let len = file.metadata().unwrap().len();
             file.set_len(len - 2).unwrap();
         }

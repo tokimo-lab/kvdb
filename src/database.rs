@@ -364,7 +364,7 @@ impl Database {
         let entries = self.btree.iter_entries(&mut self.pager)?;
 
         // Create temp database
-        let compact_path = format!("{}.compact", &self.db_path);
+        let compact_path = format!("{}.compact", self.db_path);
         {
             let mut compact_pager = Pager::new(&compact_path)?;
             let mut compact_btree = BTree::new(ROOT_PAGE_ID);
@@ -423,7 +423,9 @@ impl Database {
         reader.read_exact(&mut version_buf)?;
         let version = u32::from_le_bytes(version_buf);
         if version != 1 {
-            return Err(KvdbError::InvalidArgument("unsupported export version".into()));
+            return Err(KvdbError::InvalidArgument(
+                "unsupported export version".into(),
+            ));
         }
 
         let mut count = 0u64;
@@ -667,8 +669,11 @@ mod tests {
         let mut db = Database::open(&path, Options::default()).unwrap();
 
         for i in 0..20u32 {
-            db.put(format!("k{:04}", i).as_bytes(), format!("v{:04}", i).as_bytes())
-                .unwrap();
+            db.put(
+                format!("k{:04}", i).as_bytes(),
+                format!("v{:04}", i).as_bytes(),
+            )
+            .unwrap();
         }
 
         let stats = db.verify().unwrap();
@@ -699,8 +704,11 @@ mod tests {
         let mut db = Database::open(&path, Options::default()).unwrap();
 
         for i in 0..200u32 {
-            db.put(format!("k{:05}", i).as_bytes(), format!("v{:05}", i).as_bytes())
-                .unwrap();
+            db.put(
+                format!("k{:05}", i).as_bytes(),
+                format!("v{:05}", i).as_bytes(),
+            )
+            .unwrap();
         }
 
         let stats = db.inspect().unwrap();
@@ -877,14 +885,8 @@ mod tests {
         // Reopen — only committed batch should be applied
         {
             let mut db = Database::open(&path, Options::default()).unwrap();
-            assert_eq!(
-                db.get(b"existing").unwrap(),
-                Some(b"data".to_vec())
-            );
-            assert_eq!(
-                db.get(b"batch1_key").unwrap(),
-                Some(b"batch1_val".to_vec())
-            );
+            assert_eq!(db.get(b"existing").unwrap(), Some(b"data".to_vec()));
+            assert_eq!(db.get(b"batch1_key").unwrap(), Some(b"batch1_val".to_vec()));
             assert_eq!(db.get(b"batch2_key").unwrap(), None);
             db.close().unwrap();
         }
@@ -905,10 +907,7 @@ mod tests {
         // Reopen multiple times — each should see the same data
         for _ in 0..3 {
             let mut db = Database::open(&path, Options::default()).unwrap();
-            assert_eq!(
-                db.get(b"idem_key").unwrap(),
-                Some(b"idem_val".to_vec())
-            );
+            assert_eq!(db.get(b"idem_key").unwrap(), Some(b"idem_val".to_vec()));
             db.close().unwrap();
         }
 

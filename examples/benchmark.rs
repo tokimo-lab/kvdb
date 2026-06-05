@@ -50,7 +50,11 @@ fn bench_sequential_insert(root: &str) -> BenchResult {
     insert_range(&mut db, 0, OPERATION_COUNT);
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "sequential-insert", operations: OPERATION_COUNT, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "sequential-insert",
+        operations: OPERATION_COUNT,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn bench_random_insert(root: &str) -> BenchResult {
@@ -66,7 +70,11 @@ fn bench_random_insert(root: &str) -> BenchResult {
     }
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "random-insert", operations: OPERATION_COUNT, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "random-insert",
+        operations: OPERATION_COUNT,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn bench_point_lookup(root: &str) -> BenchResult {
@@ -83,7 +91,11 @@ fn bench_point_lookup(root: &str) -> BenchResult {
     }
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "point-lookup", operations: OPERATION_COUNT, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "point-lookup",
+        operations: OPERATION_COUNT,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn bench_scan(root: &str) -> BenchResult {
@@ -97,7 +109,11 @@ fn bench_scan(root: &str) -> BenchResult {
     }
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "scan", operations: KEY_SPACE * SCAN_REPETITIONS, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "scan",
+        operations: KEY_SPACE * SCAN_REPETITIONS,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn bench_update(root: &str) -> BenchResult {
@@ -110,7 +126,11 @@ fn bench_update(root: &str) -> BenchResult {
     }
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "update", operations: OPERATION_COUNT, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "update",
+        operations: OPERATION_COUNT,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn bench_delete(root: &str) -> BenchResult {
@@ -124,7 +144,11 @@ fn bench_delete(root: &str) -> BenchResult {
     }
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "delete", operations: delete_count, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "delete",
+        operations: delete_count,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn bench_compaction(root: &str) -> BenchResult {
@@ -142,7 +166,11 @@ fn bench_compaction(root: &str) -> BenchResult {
     db.compact().unwrap();
     let elapsed = start.elapsed().as_nanos() as u64;
     db.close().unwrap();
-    BenchResult { workload: "compact", operations: 1, elapsed_ns: elapsed }
+    BenchResult {
+        workload: "compact",
+        operations: 1,
+        elapsed_ns: elapsed,
+    }
 }
 
 fn main() {
